@@ -4,7 +4,7 @@
 ## 环境安装
 
 ```bash
-git clone https://github.com/xyst/xyst.git
+git clone https://github.com/xddq-xyst/xyst.git
 cd xyst
 
 conda create -n xyst python=3.9
