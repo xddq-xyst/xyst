@@ -54,7 +54,7 @@ python main.py --data_path ./data/example_data.xlsx --funds_init 6800 --num_tran
 
 ## 与贪心策略比较
 ```bash
-python main.py --data_path ./data/example_data.xlsx --funds_init 6800 --num_trans 6
+python main.py --data_path ./data/example_data.xlsx --funds_init 6800 --num_trans 6 --greedy
 ```
 
 ```bash
