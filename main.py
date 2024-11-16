@@ -12,6 +12,7 @@ parser.add_argument('--num_trans', type=int, default=13)
 parser.add_argument('--save_path', type=str, default='./output')
 parser.add_argument('--out_name', type=str, default=None)
 parser.add_argument('--greedy', action='store_true')
+parser.add_argument('--greedy_constraint', action='store_true')
 args = parser.parse_args()
 
 os.makedirs(args.save_path, exist_ok=True)
@@ -42,9 +43,11 @@ out_file.write(f'若如此做，请根据更新的初始条件重跑此程序或
 for loc_init in tqdm(range(num_loc)):
     if args.greedy:
         inventory_input = base_inventory * 9999999999999999999999999999999
+    elif args.greedy_constraint:
+        inventory_input = inventory_matrix_init
     else:
         inventory_input = None
-    sol, sol_path = maximize_profit_with_double_goods(
+    sol, sol_path, sol_inventory = maximize_profit_with_double_goods(
         price_transition_matrix, inventory_input, funds_init, loc_init, N
     )
 
@@ -134,10 +137,10 @@ for loc_init in tqdm(range(num_loc)):
         loc_init_ = meta['location']
         funds_init_ = np.array(sol_money)[::-1][stop_transaction]
         inventory_matrix_ = inventory_matrix_rest_for_over_inventory
-        N_ = 2
+        N_ = 4
 
         out_file.write(f'初始位置{locations[loc_init_]}, 资金{int(funds_init_)}\n')
-        sol, sol_path = maximize_profit_with_double_goods(
+        sol, sol_path, sol_inventory = maximize_profit_with_double_goods(
             price_transition_matrix, inventory_matrix_, funds_init_, loc_init_, N_
         )
 

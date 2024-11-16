@@ -115,20 +115,47 @@ def generate_proposals(prices, inventory, max_cost, loc):
                 continue
 
             num_g2 = min(rest_cost // price[g2], inventory[g2])
-            meta = dict()
-            meta['location'] = loc
-            meta[g1] = num_g1
-            meta[g2] = num_g2
 
-            num_vector = np.zeros(n_goods)
-            num_vector[g1] = num_g1
-            num_vector[g2] = num_g2
+            if rest_cost // price[g2] <= inventory[g2]:
+                meta = dict()
+                meta['location'] = loc
+                meta[g1] = num_g1
+                meta[g2] = num_g2
 
-            inventory_ = inventory.copy()
-            inventory_[g1] -= num_g1
-            inventory_[g2] -= num_g2
+                num_vector = np.zeros(n_goods)
+                num_vector[g1] = num_g1
+                num_vector[g2] = num_g2
 
-            proposals.append((meta, num_vector, inventory_))
+                inventory_ = inventory.copy()
+                inventory_[g1] -= num_g1
+                inventory_[g2] -= num_g2
+                proposals.append((meta, num_vector, inventory_))
+
+            else:
+                for g3 in range(n_goods):
+                    if g3 == g1 or g3 == g2:
+                        continue
+
+                    rest_cost_forg3 = rest_cost - num_g2 * price[g2]
+                    num_g3 = min(rest_cost_forg3 // price[g3], inventory[g3])
+
+                    meta = dict()
+                    meta['location'] = loc
+                    meta[g1] = num_g1
+                    meta[g2] = num_g2
+                    meta[g3] = num_g3
+
+                    num_vector = np.zeros(n_goods)
+                    num_vector[g1] = num_g1
+                    num_vector[g2] = num_g2
+                    num_vector[g3] = num_g3
+
+                    inventory_ = inventory.copy()
+                    inventory_[g1] -= num_g1
+                    inventory_[g2] -= num_g2
+                    inventory_[g3] -= num_g3
+
+                    proposals.append((meta, num_vector, inventory_))
 
     return proposals
 
@@ -203,4 +230,4 @@ def maximize_profit_with_double_goods(prices, inventory, funds_init, loc_init=0,
                         loc_greedy = loc_tgt
                         # print(f'{i} {loc_base} {loc_greedy}')
 
-    return dp, dp_path
+    return dp, dp_path, dp_inventory
