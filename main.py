@@ -5,19 +5,26 @@ from tqdm import tqdm
 from xyst_utils import *
 
 parser = argparse.ArgumentParser()
+
+# base information
 parser.add_argument('--data_path', type=str, default='./data/example_data.xlsx')
-# parser.add_argument('--inventory_ratio', default=3)
 parser.add_argument('--funds_init', type=int, default=6800)
 parser.add_argument('--num_trans', type=int, default=13)
+parser.add_argument('--num_trans_over', type=int, default=4)
+parser.add_argument('--loc_init', type=str, default=None)
+
+# output
 parser.add_argument('--save_path', type=str, default='./output')
 parser.add_argument('--out_name', type=str, default=None)
+
+# algorithm
 parser.add_argument('--greedy', action='store_true')
 parser.add_argument('--greedy_constraint', action='store_true')
-args = parser.parse_args()
 
+args = parser.parse_args()
 os.makedirs(args.save_path, exist_ok=True)
 out_name = f'{args.funds_init}_{args.num_trans}' if args.out_name is None else args.out_name
-if args.greedy:
+if args.greedy or args.greedy_constraint:
     out_file = open(os.path.join(args.save_path, f'{out_name}_greedy.txt'), mode='w', encoding='utf-8')
 else:
     out_file = open(os.path.join(args.save_path, f'{out_name}.txt'), mode='w', encoding='utf-8')
@@ -40,7 +47,10 @@ out_file.write(f'因初始资金和库存不同，购买数量参考价值有限
 out_file.write(f'注：是否停止加速应和飞行舟等级结合判断，若到达后升级，可在刷新库存前1分钟加速，待刷新后再出发\n')
 out_file.write(f'若如此做，请根据更新的初始条件重跑此程序或联系作者\n\n')
 
-for loc_init in tqdm(range(num_loc)):
+loc_init_range = range(num_loc)
+if args.loc_init is not None:
+    loc_init_range = [locations.index(args.loc_init)]
+for loc_init in tqdm(loc_init_range):
     if args.greedy:
         inventory_input = base_inventory * 9999999999999999999999999999999
     elif args.greedy_constraint:
@@ -50,7 +60,6 @@ for loc_init in tqdm(range(num_loc)):
     sol, sol_path, sol_inventory = maximize_profit_with_double_goods(
         price_transition_matrix, inventory_input, funds_init, loc_init, N
     )
-
 
     i = N - 1
     loc_final = sol[N,:,0].argmax()
@@ -137,7 +146,7 @@ for loc_init in tqdm(range(num_loc)):
         loc_init_ = meta['location']
         funds_init_ = np.array(sol_money)[::-1][stop_transaction]
         inventory_matrix_ = inventory_matrix_rest_for_over_inventory
-        N_ = 4
+        N_ = args.num_trans_over
 
         out_file.write(f'初始位置{locations[loc_init_]}, 资金{int(funds_init_)}\n')
         sol, sol_path, sol_inventory = maximize_profit_with_double_goods(

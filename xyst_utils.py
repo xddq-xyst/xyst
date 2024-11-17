@@ -154,8 +154,66 @@ def generate_proposals(prices, inventory, max_cost, loc):
                     inventory_[g1] -= num_g1
                     inventory_[g2] -= num_g2
                     inventory_[g3] -= num_g3
-
                     proposals.append((meta, num_vector, inventory_))
+
+                    if rest_cost // price[g3] > inventory[g3]:
+                        for g4 in range(n_goods):
+                            if g4 == g1 or g4 == g2 or g4 == g3:
+                                continue
+
+                            rest_cost_forg4 = rest_cost_forg3 - num_g3 * price[g3]
+                            num_g4 = min(rest_cost_forg4 // price[g4], inventory[g4])
+
+                            meta = dict()
+                            meta['location'] = loc
+                            meta[g1] = num_g1
+                            meta[g2] = num_g2
+                            meta[g3] = num_g3
+                            meta[g4] = num_g4
+
+                            num_vector = np.zeros(n_goods)
+                            num_vector[g1] = num_g1
+                            num_vector[g2] = num_g2
+                            num_vector[g3] = num_g3
+                            num_vector[g4] = num_g4
+
+                            inventory_ = inventory.copy()
+                            inventory_[g1] -= num_g1
+                            inventory_[g2] -= num_g2
+                            inventory_[g3] -= num_g3
+                            inventory_[g4] -= num_g4
+                            proposals.append((meta, num_vector, inventory_))
+
+                            if rest_cost_forg4 // price[g4] > inventory[g4]:
+                                for g5 in range(n_goods):
+                                    if g5 == g1 or g5 == g2 or g5 == g3 or g5 == g4:
+                                        continue
+
+                                    rest_cost_forg5 = rest_cost_forg4 - num_g4 * price[g4]
+                                    num_g5 = min(rest_cost_forg5 // price[g5], inventory[g5])
+
+                                    meta = dict()
+                                    meta['location'] = loc
+                                    meta[g1] = num_g1
+                                    meta[g2] = num_g2
+                                    meta[g3] = num_g3
+                                    meta[g4] = num_g4
+                                    meta[g5] = num_g5
+
+                                    num_vector = np.zeros(n_goods)
+                                    num_vector[g1] = num_g1
+                                    num_vector[g2] = num_g2
+                                    num_vector[g3] = num_g3
+                                    num_vector[g4] = num_g4
+                                    num_vector[g5] = num_g5
+
+                                    inventory_ = inventory.copy()
+                                    inventory_[g1] -= num_g1
+                                    inventory_[g2] -= num_g2
+                                    inventory_[g3] -= num_g3
+                                    inventory_[g4] -= num_g4
+                                    inventory_[g5] -= num_g5
+                                    proposals.append((meta, num_vector, inventory_))
 
     return proposals
 
