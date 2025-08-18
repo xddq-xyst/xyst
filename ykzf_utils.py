@@ -4,7 +4,6 @@ from tqdm import tqdm
 
 idx2coord = [np.asarray([[r, c]]) for r in range(3) for c in range(3)]
 
-# relative
 dir2coord_type1 = {
     'up': np.asarray([
         [-1, 0]
@@ -20,7 +19,6 @@ dir2coord_type1 = {
     ]),
 }
 
-# relative
 dir2coord_type2 = {
     'up': np.asarray([
         [-1, -1], [-1, 0], [-1, 1]
@@ -36,13 +34,12 @@ dir2coord_type2 = {
     ]),
 }
 
-# absolute
 dir2coord_type3 = {
     'main': np.asarray([
-        [0, 0], [1, 1], [2, 2]
+        [1, 1], [2, 2]
     ]),
     'anti': np.asarray([
-        [0, 2], [1, 1], [2, 0]
+        [1, -1], [2, -2]
     ]),
 }
 
@@ -54,14 +51,17 @@ def get_impact_coords(type_id, pos, dir):
     elif type_id == 2:
         impact_coords = coord + dir2coord_type2[dir]
     elif type_id == 3:
-        impact_coords = dir2coord_type3[dir]
+        impact_coords = coord + dir2coord_type3[dir]
     else:
         return None
 
-    if (impact_coords >= 0).all() and (impact_coords <= 2).all():
-        return impact_coords
+    valid_mask = (impact_coords >= 0) & (impact_coords <= 2)
+    valid_mask = valid_mask.all(axis=1)
+    impact_coords = impact_coords[valid_mask]
+    if valid_mask.sum() == 0:
+        return None
 
-    return None
+    return impact_coords
 
 def evaluate_layout(items):
     values = np.asarray([it['value'] for it in items]).reshape(3, 3)
@@ -75,7 +75,8 @@ def evaluate_layout(items):
 
         impact_coords = get_impact_coords(type_id, pos, dir)
         if impact_coords is not None:
-            total_bonus += values[impact_coords[:, 0], impact_coords[:, 1]].sum() * rate
+            bonus = values[impact_coords[:, 0], impact_coords[:, 1]].sum() * rate
+            total_bonus += np.floor(bonus)
 
     return base_sum + total_bonus
 
