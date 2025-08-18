@@ -35,11 +35,17 @@ dir2coord_type2 = {
 }
 
 dir2coord_type3 = {
-    'main': np.asarray([
+    'main-down': np.asarray([
         [1, 1], [2, 2]
     ]),
-    'anti': np.asarray([
+    'anti-down': np.asarray([
         [1, -1], [2, -2]
+    ]),
+    'main-up': np.asarray([
+        [-1, 1], [-2, 2]
+    ]),
+    'anti-up': np.asarray([
+        [-1, -1], [-2, -2]
     ]),
 }
 
