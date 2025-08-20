@@ -81,8 +81,9 @@ def evaluate_layout(items):
 
         impact_coords = get_impact_coords(type_id, pos, dir)
         if impact_coords is not None:
-            bonus = values[impact_coords[:, 0], impact_coords[:, 1]].sum() * rate
-            total_bonus += np.floor(bonus)
+            # bonus = values[impact_coords[:, 0], impact_coords[:, 1]].sum() * rate
+            bonus = (values[impact_coords[:, 0], impact_coords[:, 1]] * rate).round().sum()
+            total_bonus += bonus
 
     return base_sum + total_bonus
 
