@@ -15,3 +15,4 @@ python main.py
 - type 1: 相邻一格加成，方向取'up'/'down'/'left'/'right'
 - type 2: 相邻一行/列加成，方向取'up'/'down'/'left'/'right'
 - type 3: 对角线加成，方向取'main-up'/'main-down'/'anti-up'/'anti-down'
+**note:** main-up(↖)与anti-up(↗)实现反了，实际↖填写anti-up，↗填写main-up
