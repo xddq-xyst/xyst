@@ -16,4 +16,5 @@ python main.py
 - type 2: 相邻一行/列加成，方向取'up'/'down'/'left'/'right'
 - type 3: 对角线加成，方向取'main-up'/'main-down'/'anti-up'/'anti-down'
   
-**note:** main-up(↖)与anti-up(↗)实现反了，实际↖填写anti-up，↗填写main-up
+**note1:** main-up(↖)与anti-up(↗)实现反了，实际↖填写anti-up，↗填写main-up
+**note2:** 一般对于相同星级的装备，一格加成与一行/列加成的方向**相对**时分数更高，即使非相对的装备等级更高且游戏提示绿色向上箭头
