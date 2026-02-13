@@ -119,7 +119,7 @@ class PolyominoSolver:
         total_piece_area = 0
         for name, count in piece_counts.items():
             coords = self.library[name]
-            self.shapes_cache[name] = self._get_unique_rotations(coords, rotations=[0])
+            self.shapes_cache[name] = self._get_unique_rotations(coords, rotations=[0, 1, 2, 3])
             total_piece_area += self.meta[name]['num'] * count
 
         if verbose:
@@ -130,6 +130,7 @@ class PolyominoSolver:
                 print("有效面积不足")
             return False
         elif total_piece_area < self.valid_area:
+            # 用单格填补
             name = 'S'
             coords = self.library[name]
             self.shapes_cache[name] = self._get_unique_rotations(coords, rotations=[0])
